@@ -17,14 +17,13 @@ app.use(cors());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes); 
-app.use("/api/admin", adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/leads', leadRoutes);
-app.use("/api/clients", clientRoutes);
+app.use('/api/clients', clientRoutes);
 
-
-
+// ✅ Correct fallback value should be a string
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://QualAce:Qualace%402024@cluster0.teaz73k.mongodb.net/QualAce_RecruitPro?retryWrites=true&w=majority';
 
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -33,7 +32,3 @@ mongoose
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
   .catch((err) => console.error('❌ MongoDB connection error:', err));
-
-
-
-  
