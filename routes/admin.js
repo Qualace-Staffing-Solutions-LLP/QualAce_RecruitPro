@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
 const AssignedLead = require("../models/AssignedLead");
+const Lead=require("../models/Lead");
 
 const router = express.Router();
 
@@ -30,13 +31,21 @@ router.post("/search-leads", async (req, res) => {
       query[searchCriteria] = searchValue;
     }
 
-    const leads = await AssignedLead.find(query);
-    res.status(200).json(leads);
+    // Search in both AssignedLead and Lead
+    const [assignedLeads, pendingLeads] = await Promise.all([
+      AssignedLead.find(query),
+      Lead.find(query)
+    ]);
+
+    const combinedResults = [...assignedLeads, ...pendingLeads];
+
+    res.status(200).json(combinedResults);
   } catch (error) {
     console.error("Search error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 
 router.post("/reset-password", async (req, res) => {
