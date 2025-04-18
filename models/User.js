@@ -1,3 +1,5 @@
+// models/User.js
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -8,24 +10,25 @@ const userSchema = new mongoose.Schema({
   type: { type: String, enum: ['Recruiter', 'Developer'], required: true },
   recruiterId: { type: String, required: true },
   password: { type: String, required: true },
-  ActiveLeads: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'AssignedLead'
-    }
-  ],
-  inActiveLeads: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'AssignedLead'
-    }
-  ],
-  assignedLeads: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'AssignedLead'
-    }
-  ]
+
+  ActiveLeads: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AssignedLead'
+  }],
+  inActiveLeads: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AssignedLead'
+  }],
+  assignedLeads: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'AssignedLead'
+  }],
+
+  adminAssignedTasks: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Lead'
+  }]
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
