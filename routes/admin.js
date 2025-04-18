@@ -3,8 +3,40 @@ const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
 const AssignedLead = require("../models/AssignedLead");
 const Lead=require("../models/Lead");
+const User=require("../models/User");
 
 const router = express.Router();
+
+
+// POST /api/admin/send-task
+router.post("/send-task", async (req, res) => {
+  const { recruiterId, leadId } = req.body;
+
+  if (!recruiterId || !leadId) {
+    return res.status(400).json({ success: false, message: "Missing recruiterId or leadId" });
+  }
+
+  try {
+    const user = await User.findOne({ recruiterId });
+
+    if (!user) return res.status(404).json({ success: false, message: "Recruiter not found" });
+
+    const lead = await Lead.findOne({ lead_id: leadId });
+    if (!lead) return res.status(404).json({ success: false, message: "Lead not found" });
+
+    if (user.adminAssignedTasks.includes(lead._id)) {
+      return res.status(409).json({ success: false, message: "Lead already assigned to this recruiter" });
+    }
+
+    user.adminAssignedTasks.push(lead._id);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Task assigned to recruiter" });
+  } catch (error) {
+    console.error("Send task error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 
 // POST /api/admin/search-leads
