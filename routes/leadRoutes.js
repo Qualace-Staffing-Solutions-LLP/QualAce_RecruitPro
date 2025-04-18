@@ -13,7 +13,17 @@ const upload = multer({ storage });
 
 
 
+// Route to get all pending leads (i.e., all leads in Lead schema)
+router.get("/pending-leads", async (req, res) => {
+  try {
+    const pendingLeads = await Lead.find().sort({ created_at: -1 }); // Fetch all leads
 
+    res.status(200).json(pendingLeads); // ✅ Always return 200 OK
+  } catch (error) {
+    console.error("Error fetching pending leads:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 router.get("/dashboard-stats", async (req, res) => {
   try {
@@ -274,16 +284,13 @@ router.post("/bulk-upload", upload.single("file"), async (req, res) => {
 
 
 // Route to get all pending (unassigned) leads
-router.get("/pending-leads", async (req, res) => {
-  try {
-    const pendingLeads = await Lead.find({}).sort({ created_at: -1 }); // Sort by latest
+// Route to get all pending (unassigned) leads
 
-    res.status(200).json(pendingLeads);
-  } catch (error) {
-    console.error("Error fetching pending leads:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+
+
+
+
+
 
 // POST /api/leads/search
 router.post("/search", async (req, res) => {
