@@ -29,6 +29,7 @@ router.post("/send-task", async (req, res) => {
     }
 
     user.adminAssignedTasks.push(lead._id);
+    user.assignedLeads.push(lead._id);
     await user.save();
 
     res.status(200).json({ success: true, message: "Task assigned to recruiter" });
