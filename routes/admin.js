@@ -30,7 +30,17 @@ router.post("/send-task", async (req, res) => {
 
     user.adminAssignedTasks.push(lead._id);
     user.assignedLeads.push(lead._id);
+    user.inActiveLeads.push(lead._id);
     await user.save();
+
+    lead.assigned_to = recruiterId;
+    // Move lead to assigned_leads schema
+    const assignedLead = new AssignedLead(lead.toObject());
+    await assignedLead.save();
+
+    // Remove the lead from the leads collection
+    await Lead.deleteOne({ _id: lead._id });
+
 
     res.status(200).json({ success: true, message: "Task assigned to recruiter" });
   } catch (error) {
